@@ -1,0 +1,121 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    networks:
+      - no_internet_network
+    volumes:
+      - ./llm_files:/root/.ollama/:ro
+    restart: always
+    profiles:
+      - ollama_container
+
+  ollama_gpu:
+    image: ollama/ollama:latest
+    networks:
+      - no_internet_network
+    volumes:
+      - ./llm_files:/root/.ollama/:ro
+    hostname: ollama
+    profiles:
+      - ollama_container_gpu
+    restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  ollama_proxy:
+    image: nginx:latest
+    networks:
+      - no_internet_network
+      - internet_network
+    hostname: ollama
+    volumes:
+      - ./proxies/ollama/nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: always
+    profiles:
+      - ollama_proxy
+
+  app:
+    #image: clinical_app_app:latest
+    build:
+      context: ./docker
+      dockerfile: app/Dockerfile
+    networks:
+      - no_internet_network
+      - reverse_proxy_streamlit_nw
+    volumes:
+      - ./app:/app:ro  # read only
+    command: ["streamlit", "run", "/app/app.py", "--browser.gatherUsageStats", "false", "--browser.serverAddress", "localhost"]
+    restart: always
+
+  retrieve_hpo_api:
+    build:
+      context: ./docker
+      dockerfile: api/Dockerfile
+    networks:
+      - no_internet_network
+      - internet_network
+    volumes:
+      - ./app:/app:ro # read only
+    #ports:
+    #  - "5000:5000"
+    restart: always
+    command: ["python", "/app/app_functions/HPO_to_gene/hpo_gene_api_internal.py"]
+
+
+  chat_app_file_mod_api:
+    build:
+      context: ./docker
+      dockerfile: api/Dockerfile
+    networks:
+      - no_internet_network
+    volumes:
+      - ./app:/app # needs write access
+    ports:
+      - "5000:5000"
+    restart: always
+    command: ["python", "/app/app_functions/chat_app/chat_app_file_mod_api.py"]
+
+
+  reverse_proxy_streamlit:
+    image: nginx:latest
+    networks:
+      - internet_network  # Connect to the internet network
+      - reverse_proxy_streamlit_nw  # Access `app` container via internal network
+    ports:
+      - "127.0.0.1:8501:8501"  # Expose port 8501 to the host
+    volumes:
+      - ./proxies/streamlit/nginx.conf:/etc/nginx/nginx.conf:ro  # Mount custom nginx config
+    restart: always
+    profiles: 
+      - serve_local
+
+  ssh-server:
+    build:
+      context: ./docker
+      dockerfile: ssh_server/Dockerfile
+    ports:
+      - "127.0.0.1:2222:22" # Expose SSH server on host port 2222
+    networks:
+      - internet_network  # Connect to the internet network
+      - reverse_proxy_streamlit_nw  # Access `app` container via internal network
+    command: ["/usr/sbin/sshd", "-D", "-d"] # Replace with your custom entrypoint if needed
+    restart: always
+    profiles: 
+      - serve_ssh
+
+networks:
+  no_internet_network:
+    internal: true
+    name: RAG_no_internet_network
+  reverse_proxy_streamlit_nw:
+    internal: true
+    name: RAG_reverse_proxy_streamlit_nw
+  internet_network:
+    driver: bridge
+    name: RAG_internet_network
+

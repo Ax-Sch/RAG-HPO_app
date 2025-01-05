@@ -1,0 +1,16 @@
+llm_files/*
+app/app_functions/RAG_HPO/hp.jso
+app/app_functions/RAG_HPO/hpo_data_with_lineage.json
+app/app_functions/RAG_HPO/HP_DB_test.csv
+app/app_functions/RAG_HPO/G2GHPO_metadata_test.npy
+app/pages/*
+!app/pages/chat_app/
+!app/pages/chat_app/template.py
+!app/pages/chat_app/template.txt
+!app/pages/1_HPO_EXTRACTION.py
+!app/pages/2_MODIFY_CHATS.py
+!app/pages/99_simple_chat.*
+**/.DS_Store
+notes.txt
+**/__pycache__/
+**/.ipynb_checkpoints/

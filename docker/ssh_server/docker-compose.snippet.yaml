@@ -1,0 +1,18 @@
+services:
+  ssh-server:
+    image: your-ssh-image # Replace with your SSH server image
+    container_name: ssh-server
+    ports:
+      - "2222:22" # Expose SSH server on host port 2222
+    volumes:
+      - ./users:/users/
+    networks:
+      - internet_network  # Connect to the internet network
+      - reverse_proxy_streamlit_nw  # Access `app` container via internal network
+    cap_drop:
+      - ALL # Drop unnecessary capabilities
+    cap_add:
+      - NET_BIND_SERVICE # Allow only binding to low ports
+    entrypoint:
+      - /init.sh # Replace with your custom entrypoint if needed
+    restart: always
