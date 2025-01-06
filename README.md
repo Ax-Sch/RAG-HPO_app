@@ -1,6 +1,6 @@
 # RAG-HPO App
 
-This repository contains an implementation of [RAG-HPO](https://github.com/PoseyPod/RAG-HPO) and a simple chat app that can run locally and offline to ensure privacy. The frontend is built using **Streamlit**, and **Ollama** is used for executing large language models (LLMs).
+This repository contains an implementation of [RAG-HPO](https://github.com/PoseyPod/RAG-HPO) and a simple chat app that can run locally and offline to ensure privacy. RAG-HPO was adopted to extract HPO terms from medical notes of individual cases. Additionally, genes, linked to HPO-terms can be retrieved. The chat app allows to create custom prompts for the local large language model (LLM). The frontend is built using **Streamlit**, and **Ollama** is used for executing LLMs. This comes without any warranty (see licence). 
 
 ---
 
@@ -31,9 +31,14 @@ This application is designed to run in isolated containers to ensure security:
 ### Requirements
 - **Docker** (tested version: 27.3.1) with **Docker Compose** (v2.29.7)
 
-Ensure the working directory is the local repository's directory.
+Clone the repository into the desired directory you would like to place it:
+```bash
+git clone https://github.com/Ax-Sch/RAG-HPO_app
+cd RAG-HPO_app
+```
 
 ### Download LLM Files
+You can replace llama3.1:8b by your prefered LLM (see ollama website) or add additional LLMs.
 #### Option 1: Ollama in a Docker Container
 ```bash
 # Run the Ollama Docker container and store models in the llm_files directory:
@@ -54,7 +59,7 @@ ollama pull llama3.1:8b
 ```
 
 ### Initialize HPO Vector Database
-The download link to the HPO json file must be given as argument to the init.py script.
+The download link to the HPO json file is given as argument to the init.py script, and can be adopted, if needed:
 ```bash
 docker build -f ./docker/app/Dockerfile -t initialize_vector ./docker/
 docker run -v "./app:/app" initialize_vector python3 app/app_functions/RAG_HPO/init.py \
@@ -68,21 +73,21 @@ docker rm initialize_vector
 
 ### Syntax
 ```bash
-docker-compose [profiles] up --build
+docker-compose [profiles] up --build [add "-d" to run in the background]
 ```
 
-### Profiles
-1. **LLM Profiles**:
+### Two profiles must be set:
+1. **Choose how ollama should be run**:
    - **CPU Only:** `--profile ollama_container`
    - **GPU:** `--profile ollama_container_gpu`  
      *Settings are for a NVIDIA GPU. Refer to [Ollama Docker Help](https://hub.docker.com/r/ollama/ollama) for troubleshooting.*
    - **Mac (Local Installation):** `--profile ollama_proxy`
 
-2. **Streamlit Profiles**:
+2. **Choose how to serve the streamlit app**:
    - **Localhost:** `--profile serve_local`  
-     *App available at `127.0.0.1:8501`.*
+     *App available at `127.0.0.1:8501` via a web browser.*
    - **SSH Server:** `--profile serve_ssh`  
-     *A SSH server will allow forwarding the app within the local network.*  
+     *A SSH server will allow forwarding the app within the local network (see Examples below).*  
      Add users by editing:  
      `RAG-HPO_app/docker/ssh_server/users/users.txt`
      The format is: USERNAME1:PASSWORD1,USERNAME2:PASSWORD2,...
@@ -91,7 +96,7 @@ docker-compose [profiles] up --build
 
 ## Examples
 
-### Ollama on CPU and Local Access:
+### Ollama on CPU and local access only:
 ```bash
 docker-compose --profile ollama_container --profile serve_local up --build
 ```
@@ -104,6 +109,7 @@ docker-compose --profile ollama_container --profile serve_local up --build
    ```
 2. **Access from Client**:
    ```bash
+   # adjust test1 to one of the usernames you provided via the users.txt file (see above)
    ssh -L 8501:app:8501 -p 2222 test1@[SERVER_IP]
    ```
    *Access the app via browser at `127.0.0.1:8501`.*

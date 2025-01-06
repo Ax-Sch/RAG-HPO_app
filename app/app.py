@@ -11,6 +11,6 @@ st.sidebar.success("Hello")
 
 st.markdown(
     """
-    First test regarding a local implementation of large language models for genetics.
+    A local implementation of large language models for genetics.
 """
 )
