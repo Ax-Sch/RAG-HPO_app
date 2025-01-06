@@ -1,6 +1,6 @@
 # RAG-HPO App
 
-This repository contains an implementation of [RAG-HPO](https://github.com/PoseyPod/RAG-HPO) and a chat app that can run locally and offline to ensure privacy. The frontend is built using **Streamlit**, and **Ollama** is used for executing large language models (LLMs).
+This repository contains an implementation of [RAG-HPO](https://github.com/PoseyPod/RAG-HPO) and a simple chat app that can run locally and offline to ensure privacy. The frontend is built using **Streamlit**, and **Ollama** is used for executing large language models (LLMs).
 
 ---
 
@@ -12,7 +12,8 @@ This repository contains an implementation of [RAG-HPO](https://github.com/Posey
    - [Initialize HPO Vector Database](#initialize-hpo-vector-database)
 3. [Run](#run)
 4. [Examples](#examples)
-5. [Remarks](#remarks)
+5. [Services](#services)
+6. [Remarks](#remarks)
 
 ---
 
