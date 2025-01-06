@@ -45,7 +45,7 @@ You can replace llama3.1:8b by your prefered LLM (see ollama website) or add add
 docker run -d -v ./llm_files:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
 
 # Pull the required model (e.g., llama3.1:8b):
-ollama pull llama3.1:8b
+docker exec -it ollama ollama pull llama3.1:8b
 
 # Stop and remove the Ollama container:
 docker stop ollama
