@@ -14,7 +14,7 @@ csv.field_size_limit(sys.maxsize)
 # Paths to the files
 JSON_FILE_PATH = 'hpo_data_with_lineage.json'
 CSV_FILE_PATH = 'HPO_addons.csv'
-OUTPUT_FILE = 'G2GHPO_metadata_test.npy'
+OUTPUT_FILE = 'G2GHPO_metadata.npy'
 MODEL_NAME = "BAAI/bge-small-en-v1.5"
 CSV_OUTPUT_FILE = 'HP_DB_test.csv'  # Output file for manual inspection
 
