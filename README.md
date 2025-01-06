@@ -19,8 +19,8 @@ This repository contains an implementation of [RAG-HPO](https://github.com/Posey
 ## Idea
 
 This application is designed to run in isolated containers to ensure security:
-- All containers use an **internal network** without internet access for communication.
-- **Streamlit** and **Ollama** containers operate without internet or write access to the local file system.
+- All containers use an **internal network** without internet access for communication amongst each other.
+- **Streamlit** and **Ollama** containers operate without internet and write access to the local file system.
 - Communication with external networks or local file storage happens via dedicated containers.
 
 ---
@@ -53,9 +53,11 @@ ollama pull llama3.1:8b
 ```
 
 ### Initialize HPO Vector Database
+The download link to the HPO json file must be given as argument to the init.py script.
 ```bash
 docker build -f ./docker/app/Dockerfile -t initialize_vector ./docker/
-docker run -v "./app:/app" initialize_vector /bin/bash app/app_functions/RAG_HPO/initialize.sh
+docker run -v "./app:/app" initialize_vector python3 app/app_functions/RAG_HPO/init.py \
+   https://github.com/obophenotype/human-phenotype-ontology/releases/download/v2024-12-12/hp.json
 docker rm initialize_vector
 ```
 
@@ -104,6 +106,26 @@ docker-compose --profile ollama_container --profile serve_local up --build
    ssh -L 8501:app:8501 -p 2222 test1@[SERVER_IP]
    ```
    *Access the app via browser at `127.0.0.1:8501`.*
+
+---
+
+## Services
+
+### Ollama Services
+- **`ollama`**: Ollama container, CPU only (internal network only, read access to model files only).  
+- **`ollama_gpu`**: GPU-enabled ollama server (internal network only, read access to model files only).  
+- **`ollama_proxy`**: Nginx proxy for Ollama (internal and external networks).  
+
+### Applications
+- **`app`**: Streamlit app (internal network only, read-only access to app files).  
+
+### APIs
+- **`retrieve_hpo_api`**: API for HPO data retrieval (internal and external networks, no access to local files).  
+- **`chat_app_file_mod_api`**: API for prompt management (internal network only, read/write access to local files).  
+
+### Proxies for Streamlit App
+- **`reverse_proxy_streamlit`**: Nginx proxy for serving the Streamlit app at 127.0.0.1 (internal and external networks).  
+- **`ssh-server`**: SSH server for port forwarding only (internal and external networks).  
 
 ---
 

@@ -1,5 +1,6 @@
 import requests
 import os
+import sys
 
 
 def download_file(url, output_path):
@@ -24,14 +25,16 @@ def download_file(url, output_path):
         print(f"Failed to download file: {e}")
         return False
 
+# get hp.json
+# e.g. "https://github.com/obophenotype/human-phenotype-ontology/releases/download/v2024-12-12/hp.json"
+HP_JSON_DL_LINK=sys.argv[1]
+
 
 script_path=os.path.realpath(__file__)
 script_dir=os.path.dirname(script_path)
 
 os.chdir(script_dir)
 
-# get hp.json
-HP_JSON_DL_LINK="https://github.com/obophenotype/human-phenotype-ontology/releases/download/v2024-12-12/hp.json"
 
 print("Download HP.json from " + HP_JSON_DL_LINK)
 

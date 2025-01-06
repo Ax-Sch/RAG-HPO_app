@@ -1,4 +1,5 @@
 services:
+# there are 3 containers to serve ollama, they can be selected by the profile options
   ollama:
     image: ollama/ollama:latest
     networks:
@@ -39,6 +40,7 @@ services:
     profiles:
       - ollama_proxy
 
+#streamlit is running here
   app:
     #image: clinical_app_app:latest
     build:
@@ -66,7 +68,7 @@ services:
     restart: always
     command: ["python", "/app/app_functions/HPO_to_gene/hpo_gene_api_internal.py"]
 
-
+# this is to add or edit prompts
   chat_app_file_mod_api:
     build:
       context: ./docker
@@ -80,7 +82,7 @@ services:
     restart: always
     command: ["python", "/app/app_functions/chat_app/chat_app_file_mod_api.py"]
 
-
+# serve the streamlit app to the localhost
   reverse_proxy_streamlit:
     image: nginx:latest
     networks:
@@ -94,6 +96,7 @@ services:
     profiles: 
       - serve_local
 
+# serve the streamlit app via ssh
   ssh-server:
     build:
       context: ./docker
