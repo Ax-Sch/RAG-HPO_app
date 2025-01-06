@@ -71,11 +71,11 @@ def run_chat_app(system_message_file, model_name="llama3.1"):
             st.session_state.chat_history = [SystemMessage(content=system_message)]
         st.session_state.chat_history.append(HumanMessage(content=user_input))
         # Get response from the model
-        print(st.session_state.chat_history)
+        #print(st.session_state.chat_history) # uncomment for debugging
         response = llm(st.session_state.chat_history)
         # Add AI's response to the chat history
         st.session_state.chat_history.append(AIMessage(content=response.content))
-        print(st.session_state.chat_history)
+        #print(st.session_state.chat_history) # uncomment for debugging
     if st.button("Reset"):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
