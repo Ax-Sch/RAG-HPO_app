@@ -87,7 +87,8 @@ services:
       - no_internet_network
     read_only: true
     volumes:
-      - ./app:/app # needs write access
+      - ./app/pages:/app/pages # needs write access to pages folder only
+      - ./app/app_functions/chat_app:/app/app_functions/chat_app:ro
     restart: always
     command: ["python", "/app/app_functions/chat_app/chat_app_file_mod_api.py"]
 
