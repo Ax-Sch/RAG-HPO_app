@@ -64,7 +64,6 @@ The download link to the HPO json file is given as argument to the init.py scrip
 docker build -f ./docker/app/Dockerfile -t initialize_vector ./docker/
 docker run -v "./app:/app" initialize_vector python3 app/app_functions/RAG_HPO/init.py \
    https://github.com/obophenotype/human-phenotype-ontology/releases/download/v2024-12-12/hp.json
-docker rm initialize_vector
 ```
 
 ---

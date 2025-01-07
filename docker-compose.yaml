@@ -4,6 +4,7 @@ services:
     image: ollama/ollama:latest
     networks:
       - no_internet_network
+    read_only: true
     volumes:
       - ./llm_files:/root/.ollama/:ro
     restart: always
@@ -14,6 +15,7 @@ services:
     image: ollama/ollama:latest
     networks:
       - no_internet_network
+    read_only: true
     volumes:
       - ./llm_files:/root/.ollama/:ro
     hostname: ollama
@@ -49,9 +51,12 @@ services:
     networks:
       - no_internet_network
       - reverse_proxy_streamlit_nw
+    read_only: true
+    tmpfs:
+      - /python_tmp
     volumes:
       - ./app:/app:ro  # read only
-    command: ["streamlit", "run", "/app/app.py", "--browser.gatherUsageStats", "false", "--browser.serverAddress", "localhost"]
+    command: /bin/bash -c "cp -r /tmp/* /python_tmp/ && streamlit run /app/app.py --browser.gatherUsageStats false --browser.serverAddress localhost"
     restart: always
 
   retrieve_hpo_api:
@@ -61,10 +66,9 @@ services:
     networks:
       - no_internet_network
       - internet_network
+    read_only: true
     volumes:
       - ./app:/app:ro # read only
-    #ports:
-    #  - "5000:5000"
     restart: always
     command: ["python", "/app/app_functions/HPO_to_gene/hpo_gene_api_internal.py"]
 
@@ -75,10 +79,9 @@ services:
       dockerfile: api/Dockerfile
     networks:
       - no_internet_network
+    read_only: true
     volumes:
       - ./app:/app # needs write access
-    #ports:
-    #  - "5000:5000"
     restart: always
     command: ["python", "/app/app_functions/chat_app/chat_app_file_mod_api.py"]
 

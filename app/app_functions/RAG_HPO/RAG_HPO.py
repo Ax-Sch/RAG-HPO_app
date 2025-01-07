@@ -25,6 +25,8 @@ import ast
 import socket
 
 rag_hpo_dir = os.path.dirname(__file__) + "/"
+# set temp directory
+os.environ['TMPDIR'] = '/python_tmp/'
 
 with open(rag_hpo_dir + 'hpo_data_with_lineage.json', 'r') as file:
     hpo_data = json.load(file)
