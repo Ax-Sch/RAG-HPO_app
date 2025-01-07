@@ -1,5 +1,7 @@
 services:
-# there are 3 containers to serve ollama, they can be selected by the profile options
+
+# 3 containers of whom one should be chosen by the profiles options to serve the local llm with ollama:
+  # CPU only container
   ollama:
     image: ollama/ollama:latest
     networks:
@@ -11,6 +13,7 @@ services:
     profiles:
       - ollama_container
 
+  # GPU (nvidia) container
   ollama_gpu:
     image: ollama/ollama:latest
     networks:
@@ -29,7 +32,8 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
-
+  
+  # proxy to local installation
   ollama_proxy:
     image: nginx:latest
     networks:
@@ -42,9 +46,10 @@ services:
     profiles:
       - ollama_proxy
 
-#streamlit is running here
+
+# Streamlit app, HPO-gene API and Chat-app file mod API:
+  # the actual website / streamlit is running here
   app:
-    #image: clinical_app_app:latest
     build:
       context: ./docker
       dockerfile: app/Dockerfile
@@ -59,6 +64,7 @@ services:
     command: /bin/bash -c "cp -r /tmp/* /python_tmp/ && streamlit run /app/app.py --browser.gatherUsageStats false --browser.serverAddress localhost"
     restart: always
 
+  # API to retrieve genes of HPO terms
   retrieve_hpo_api:
     build:
       context: ./docker
@@ -72,7 +78,7 @@ services:
     restart: always
     command: ["python", "/app/app_functions/HPO_to_gene/hpo_gene_api_internal.py"]
 
-# this is to add or edit prompts
+  # API to add or edit prompts of the chat app
   chat_app_file_mod_api:
     build:
       context: ./docker
@@ -85,7 +91,10 @@ services:
     restart: always
     command: ["python", "/app/app_functions/chat_app/chat_app_file_mod_api.py"]
 
-# serve the streamlit app to the localhost
+
+
+# containers that serve the website / streamlit app, select by profiles
+  # serve the streamlit app to the localhost/127.0.0.1 only
   reverse_proxy_streamlit:
     image: nginx:latest
     networks:
@@ -99,21 +108,24 @@ services:
     profiles: 
       - serve_local
 
-# serve the streamlit app via ssh
+# activate ssh server to port-forward the streamlit app; only port-forwarding allowed; interactive login via ssh is deactivated
   ssh-server:
     build:
       context: ./docker
       dockerfile: ssh_server/Dockerfile
     ports:
-      - "127.0.0.1:2222:22" # Expose SSH server on host port 2222
+      - "2222:22" # Expose SSH server on host port 2222
     networks:
       - internet_network  # Connect to the internet network
       - reverse_proxy_streamlit_nw  # Access `app` container via internal network
-    command: ["/usr/sbin/sshd", "-D", "-d"] # Replace with your custom entrypoint if needed
+    command: ["/usr/sbin/sshd", "-D", "-d"] 
     restart: always
     profiles: 
       - serve_ssh
 
+
+
+# networks - only internet_network is connected to the network of the host machine
 networks:
   no_internet_network:
     internal: true

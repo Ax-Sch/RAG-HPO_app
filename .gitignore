@@ -3,6 +3,7 @@ app/app_functions/RAG_HPO/hp.jso
 app/app_functions/RAG_HPO/hpo_data_with_lineage.json
 app/app_functions/RAG_HPO/HP_DB_test.csv
 app/app_functions/RAG_HPO/G2GHPO_metadata_test.npy
+app/app_functions/RAG_HPO/G2GHPO_metadata.npy
 app/pages/*
 !app/pages/chat_app/
 !app/pages/chat_app/template.py
