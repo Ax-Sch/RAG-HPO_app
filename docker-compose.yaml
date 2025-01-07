@@ -77,8 +77,8 @@ services:
       - no_internet_network
     volumes:
       - ./app:/app # needs write access
-    ports:
-      - "5000:5000"
+    #ports:
+    #  - "5000:5000"
     restart: always
     command: ["python", "/app/app_functions/chat_app/chat_app_file_mod_api.py"]
 
