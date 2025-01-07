@@ -440,7 +440,7 @@ def clinical_notes_to_HPO(clinical_notes: str, model_name: str):
         for _, row in df.iterrows():
             clinical_note = row['clinical_note']
             patient_id = row['patient_id']
-            timestamped_print(f"Processing clinical note for patient_id {patient_id}: {clinical_note[:30]}...")
+            timestamped_print(f"Processing clinical note for patient_id {patient_id} ...") # modified for privacy
             result_df = process_row(clinical_note, system_message_I, embeddings_model, index, embedded_documents)
             if result_df is not None:
                 result_df['patient_id'] = patient_id
@@ -521,7 +521,7 @@ def clinical_notes_to_HPO(clinical_notes: str, model_name: str):
             lambda group: group[['phrase', 'HPO_Term']].to_dict('records')
         )
 
-        print(final_combined_df_grouped)
+        #print(final_combined_df_grouped) # commented out for privacy
         final_result_df = pd.DataFrame({
             'patient_id': final_combined_df_grouped.index,
             'HPO_Terms': final_combined_df_grouped.values
@@ -529,7 +529,7 @@ def clinical_notes_to_HPO(clinical_notes: str, model_name: str):
         
         # Process the final results
         #process_results(final_result_df) 
-        print(final_result_df)
+        #print(final_result_df)
         new_data=process_hpo_simple(final_result_df)
 
         final_result_df_annotated = join_label_and_synonyms(new_data)
