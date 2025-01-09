@@ -22,14 +22,14 @@ model_name = st.selectbox(
 clinical_notes = st.text_area("Enter clinical notes:", height=200)
 
 
-translate_to_english = st.checkbox("Translate clinical notes to English before processing")
-
 # If the user wants to translate the input text to English
-if translate_to_english and clinical_notes:
+if st.button("Optional: Translate to English") and clinical_notes:
     translated_notes=translate_text_to_English(clinical_notes, model_name)
     st.session_state.translated_notes=translated_notes
-    st.write("Translated Clinical Notes:", translated_notes)
 
+# show translation
+if "translated_notes" in st.session_state:
+    st.write(f":red[**Translated Clinical notes:**] {st.session_state.translated_notes}")
 
 # Button to trigger HPO term extraction
 if st.button("Get HPO Terms"):
@@ -100,3 +100,11 @@ if st.button("Get Genes"):
         })
         genes_df=pd.concat([genes_df, temp_genes_df], ignore_index=True)
     st.write(genes_df)
+
+if st.button("Reset"):
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+    st.rerun()
+
+
+st.write("Note: Using the "Get Genes" button will transmit the selected HPO terms to https://ontology.jax.org and retrieve the corresponding genes from this server. All other data will remain on the local server.")
