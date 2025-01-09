@@ -7,7 +7,7 @@ echo "PasswordAuthentication yes
         Match User *
         ForceCommand sleep infinity
         AllowTcpForwarding yes
-        PermitTTY no" >> /etc/ssh/sshd_config
+        PermitTTY no"  >> /etc/ssh/sshd_config
 
 
 for user in "${users[@]}"; do

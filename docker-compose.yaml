@@ -119,7 +119,7 @@ services:
     networks:
       - internet_network  # Connect to the internet network
       - reverse_proxy_streamlit_nw  # Access `app` container via internal network
-    command: ["/usr/sbin/sshd", "-D", "-d"] 
+    command: ["/usr/sbin/sshd", "-D"] 
     restart: always
     profiles: 
       - serve_ssh

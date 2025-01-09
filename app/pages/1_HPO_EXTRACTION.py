@@ -107,4 +107,4 @@ if st.button("Reset"):
     st.rerun()
 
 
-st.write("Note: Using the "Get Genes" button will transmit the selected HPO terms to https://ontology.jax.org and retrieve the corresponding genes from this server. All other data will remain on the local server.")
+st.write("Note: Using the 'Get Genes' button will transmit the selected HPO terms to https://ontology.jax.org and retrieve the corresponding genes from this server. All other data will remain on the local server.")
