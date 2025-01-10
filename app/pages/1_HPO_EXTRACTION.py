@@ -37,6 +37,7 @@ def annotate_clinical_notes(_clinical_notes, _hpo_df):
     # loop over rows of pandas df _hpo_df
     # for each row search for _hpo_df["Phenotype name"] in the string _clinical notes (ignore upper/lower case) and replace hits with 
     # red[**hit**]
+    _hpo_df=_hpo_df.drop_duplicates()
     for _, row in _hpo_df.iterrows():
         phenotype = row["Phenotype name"]
         hpo_label = row["label"]
